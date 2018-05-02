@@ -1,4 +1,3 @@
-import CircularProgress from 'material-ui/CircularProgress';
 import RaisedButton from 'material-ui/RaisedButton';
 import React, { Component } from 'react';
 import firebase from 'firebase';
@@ -83,7 +82,6 @@ export default class RockPaperScissors extends Component {
     } else if(this.state.opponent === "") {
       return (<div>
         <h1>Waiting for opponent</h1>
-        <CircularProgress size={60}/>
       </div>);
     }
     return (<div>

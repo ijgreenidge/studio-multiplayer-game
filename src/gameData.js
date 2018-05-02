@@ -1,6 +1,7 @@
 import ChatRoom from './ChatRoom.js';
 import TicTacToe from './TicTacToe.js';
 import RockPaperScissors from './RockPaperScissors.js';
+import Pokemon from './pokemon.js';
 
 const gameData = {
 
@@ -31,6 +32,16 @@ const gameData = {
     component: RockPaperScissors,
   },
 
+  pokemon: {
+    title: "Pokemon Simulator",
+    authors: "Imani Greenidge and Raishan Bernard",
+    description: "Turn Based Pokemon Battle",
+    minUsers: 2,
+    maxUsers: 2,
+    component: Pokemon,
+
+
+  },
 
 }
 

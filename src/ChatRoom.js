@@ -60,16 +60,18 @@ export default class ChatRoom extends Component {
 
   render() {
     var chatListItems = this.state.chats.slice(0, 10).map((chat, i) => (
-      <ListItem
+        <ListItem
           key={chat.id}
           style={{opacity: (10 - i) / 10}}
           disabled={true}
           primaryText={UserApi.getName(chat.user)}
           secondaryText={chat.message}
-          leftAvatar={<Avatar src={UserApi.getPhotoUrl(chat.user)} />} />
+          leftAvatar={<Avatar src={UserApi.getPhotoUrl(chat.user)} />
+      }
+      />
     ));
-    return (
-      <div style={{margin: 56}}>
+  return (
+    <div style={{margin: 56}}>
         <TextField
             name="Chat message input"
             hintText="Type your message and press enter"
@@ -81,6 +83,6 @@ export default class ChatRoom extends Component {
           {chatListItems}
         </List>
       </div>
-    );
-  }
+  );
+}
 }

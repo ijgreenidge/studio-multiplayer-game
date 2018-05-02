@@ -21,14 +21,15 @@ class Header extends Component {
 
   signOut() {
     firebase.auth().signOut().catch(
-        (error) => console.error("Failed to sign out", error));
+      (error) => console.error("Failed to sign out", error));
   }
 
   getTitle() {
     var parts = this.props.location.pathname.split("/");
     if (parts.length >= 2 && parts[1] in gameData) {
       return gameData[parts[1]].title;
-    } else {
+    }
+    else {
       return "Studio Games!";
     }
   }
@@ -37,7 +38,14 @@ class Header extends Component {
     return this.props.location.pathname === "/";
   }
 
+
+
   render() {
+
+    if (this.getTitle() === "Pokemon Simulator") {
+      var style = { backgroundColor: "orange" }
+    }
+
     var user = firebase.auth().currentUser;
     return (
       <div>
@@ -47,7 +55,10 @@ class Header extends Component {
               <FlatButton label={"Sign out as " + user.displayName} />
             }
             onLeftIconButtonClick={() => this.setDrawerOpen(true)}
-            onRightIconButtonClick={() => this.signOut()} />
+            onRightIconButtonClick={() => this.signOut()} 
+            style = {style}
+            />
+            
 
         <Drawer
             docked={false}

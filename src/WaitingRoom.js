@@ -1,5 +1,4 @@
 import AddGameButton from './AddGameButton.js';
-import CircularProgress from 'material-ui/CircularProgress';
 import GameCard from './GameCard.js';
 import React, { Component } from 'react';
 import firebase from 'firebase';
@@ -44,7 +43,6 @@ export default class WaitingRoom extends Component {
     if (this.state.sessions === null) {
       return (
         <center style={cardStyle}>
-          <CircularProgress size={56} />
         </center>
       )
     }

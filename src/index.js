@@ -6,6 +6,10 @@ import ReactDOM from 'react-dom';
 import registerServiceWorker from './registerServiceWorker';
 import { BrowserRouter } from 'react-router-dom'
 
+
+
+    
+
 const WrappedApp = () => (
   <BrowserRouter>
     <MuiThemeProvider>
@@ -16,3 +20,4 @@ const WrappedApp = () => (
 
 ReactDOM.render(<WrappedApp />, document.getElementById('root'));
 registerServiceWorker();
+
