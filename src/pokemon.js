@@ -5,6 +5,11 @@ import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 import pokeStyle from './pokeStyle.css'
 import firebase from 'firebase'
+import backgroundImage1 from './images/Background1.png'
+import Trainer1Image from './images/Trainer1.png'
+import Trainer2Image from './images/Trainer2.png'
+import UserApi from './UserApi.js';
+import Avatar from 'material-ui/Avatar';
 
 
 const style = {
@@ -16,61 +21,118 @@ export default class Pokemon extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            playerOneName: "", //this.state.playerOneName
+            playerOne: "", //this.state.playerOneName
             playerOneHealth: 0,
             playerOneTrainer: "",
-            playerTwoName: "",
+            playerTwo: "",
             playerTwoHealth: 0,
             playerTwoTrainer: "",
         };
-        this.playerData = firebase.database().ref('/playerData');
-        // TODO #1 update the state when the Firebase items updates.
+    }
 
-        this.playerData.on("value", (snapshot) => {
-            var playerData = snapshot.val();
-            console.log(playerData);
+    componentWillMount() {
+        var id = this.props.match.params.id;
+        this.sessionDatabaseRef = firebase.database().ref("/session/" + id);
+        var currentUser = firebase.auth().currentUser.uid;
+
+        this.sessionDatabaseRef.on("value", (snapshot) => {
+            var sessionSnapshot = snapshot.val();
+            if (sessionSnapshot === null) {
+                return;
+            }
+
+            if (!sessionSnapshot.playerOne) {
+                this.sessionDatabaseRef.update({ playerOne: currentUser });
+            }
+            else if (!sessionSnapshot.playerTwo && currentUser !== sessionSnapshot.playerOne) {
+                this.sessionDatabaseRef.update({ playerTwo: currentUser });
+            }
+
             this.setState({
-                playerOneName: playerData.playerOneName,
-                playerOneHealth: playerData.playerOneHealth,
-                playerOneTrainer: playerData.playerOneTrainer,
-                playerTwoName: playerData.playerTwoName,
-                playerTwoHealth: playerData.playerTwoHealth,
-                playerTwoTrainer: playerData.playerTwoTrainer,
-
+                playerOne: sessionSnapshot.playerOne,
+                playerOneHealth: sessionSnapshot.playerOneHealth,
+                playerTwo: sessionSnapshot.playerTwo,
+                playerTwoHealth: sessionSnapshot.playerTwoHealth,
             });
         });
+    }
 
+
+    randomNumber() {
+       return Math.floor(Math.random() * 25) + 5;
     }
 
     playerOneAttack() {
-        this.playerData.update({ playerTwoHealth: this.state.playerTwoHealth - 50 });
+        // make randam attack to bring score down
+        this.sessionDatabaseRef.update({ playerTwoHealth: this.state.playerTwoHealth - this.randomNumber() });
     }
 
     playerTwoAttack() {
-        this.playerData.update({ playerOneHealth: this.state.playerOneHealth - 50 });
+        // make randam attack to bring score down
+        this.sessionDatabaseRef.update({ playerOneHealth: this.state.playerOneHealth - this.randomNumber() });
     }
-    render() {   
-        return (
-            <div className="shopping-list">
-                <h1 id="mainTitle">Player1 vs Player2</h1>
+
+
+    gameReset() {
+        this.sessionDatabaseRef.update({ playerOneHealth: this.state.playerOneHealth = 100 });
+        this.sessionDatabaseRef.update({ playerTwoHealth: this.state.playerTwoHealth = 100 });
+    }
+    
+    runScene(){
+        console.log("Scene is Running")
+    }
+
+    checkWin() {
+
+    }
+
+    render() {
         
-                <div className="playerOne">
-                    <img src="" />
-                    <h2 className="playerOneName"> {this.state.playerOneName}</h2>
-                    <h2 classname="playerOneHealth">{this.state.playerOneHealth}</h2>
-                    <RaisedButton onClick={this.playerOneAttack.bind(this)} label="Default" style={style} />
-                    
+                 let display 
+         if(this.state.playerOneHealth <= 0) {
+             display = <h1>{UserApi.getName(this.state.playerTwo)} Wins</h1>
+             {this.gameReset}
+         } else if(this.state.playerTwoHealth <= 0) {
+             display = <h1>{UserApi.getName(this.state.playerOne)} Wins</h1>
+             {this.gameReset}
+         }
+
+        return (
+            <div className="main">
+                <div id="mainTitle">
+                    <h1> Pokemon Universe! </h1>
+                    <RaisedButton label="Start/Reset" primary={true} onClick={this.gameReset.bind(this)}/>
+                    {display}
                 </div>
-              
-                <div className="playerTwo">
-                   <img src="" />
-                   <h2 className="playerTwoName">{this.state.playerTwoName}</h2>
-                    <h2 classname="playerTwoHealth">{this.state.playerTwoHealth}</h2>
-                   <RaisedButton onClick={this.playerTwoAttack.bind(this)} label="Default" style={style} />
-                   
+                <div class="playerOne">
+                    <h2>Player 1: {UserApi.getName(this.state.playerOne)}</h2>
+                    <Avatar src={UserApi.getPhotoUrl(this.state.playerOne)}/>
+                    <h3> HP {this.state.playerOneHealth} </h3>
+                    <div className="fixed-btns">
+                        <RaisedButton className="Attack1" label="Attack" onClick={this.playerOneAttack.bind(this)}/>
+                        <RaisedButton className ="Attack2" label="Run" onClick={this.gameReset.bind(this)}/>
+                        <RaisedButton className = "Attack3" label="random1" />
+                        <RaisedButton className = "Attack4" label="random2" />
+                    </div>
+                </div>
+                <div id="mainBox">
+                <img className="battleImage" src={backgroundImage1} />
+                </div>
+                <div class="playerTwo">
+                    <div id="playerInfo2">
+                    <h2>Player 2: {UserApi.getName(this.state.playerTwo)}</h2>
+                    <h3> HP {this.state.playerTwoHealth} </h3>
+                    <Avatar src={UserApi.getPhotoUrl(this.state.playerTwo)}/>
+                    </div>
+                    <div className="fixed-btns">
+                        <RaisedButton className="Attack1" label="Attack" onClick={this.playerTwoAttack.bind(this)}/>
+                        <RaisedButton className = "Attack2" label="Run" onClick={this.gameReset.bind(this)}/>
+                        <RaisedButton className = "Attack3" label="random1" />
+                        <RaisedButton className = "Attack4" label="random2" />
+                    </div>
                 </div>
                 
-              </div>
+            </div>
 
         );
     }

@@ -31,9 +31,9 @@ export default class RockPaperScissors extends Component {
 
   componentWillMount() {
     var id = this.props.match.params.id;
-    var sessionDatabaseRef = firebase.database().ref("/session/" + id);
+    this.sessionDatabaseRef = firebase.database().ref("/session/" + id);
     var currentUser = firebase.auth().currentUser.uid;
-    sessionDatabaseRef.on("value", (snapshot) => {
+    this.sessionDatabaseRef.on("value", (snapshot) => {
       var sessionSnapshot = snapshot.val();
       if (sessionSnapshot === null) {
         return;

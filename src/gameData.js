@@ -36,7 +36,7 @@ const gameData = {
     title: "Pokemon Simulator",
     authors: "Imani Greenidge and Raishan Bernard",
     description: "Turn Based Pokemon Battle",
-    minUsers: 2,
+    minUsers: 1,
     maxUsers: 2,
     component: Pokemon,
 

@@ -1,0 +1,111 @@
+import React, { Component } from 'react';
+import RaisedButton from 'material-ui/RaisedButton';
+// import AppBar from 'material-ui/AppBar';
+import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card';
+import FlatButton from 'material-ui/FlatButton';
+import pokeStyle from './pokeStyle.css'
+import firebase from 'firebase'
+import backgroundImage1 from './images/Background1.png'
+import Trainer1Image from './images/Trainer1.png'
+import Trainer2Image from './images/Trainer2.png'
+
+
+const style = {
+    margin: 12,
+};
+
+export default class Pokemon extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            playerOneName: "", //this.state.playerOneName
+            playerOneHealth: 0,
+            playerOneTrainer: "",
+            playerTwoName: "",
+            playerTwoHealth: 0,
+            playerTwoTrainer: "",
+        };
+        this.gameReset = this.gameReset.bind(this);
+         this.playerData = firebase.database().ref('/playerData');
+        // TODO #1 update the state when the Firebase items updates.
+
+        this.playerData.on("value", (snapshot) => {
+            var playerData = snapshot.val();
+            console.log(playerData);
+            this.setState({
+                playerOneName: playerData.playerOneName,
+                playerOneHealth: playerData.playerOneHealth,
+                playerOneTrainer: playerData.playerOneTrainer,
+                playerTwoName: playerData.playerTwoName,
+                playerTwoHealth: playerData.playerTwoHealth,
+                playerTwoTrainer: playerData.playerTwoTrainer,
+
+            });
+        });
+
+    }
+
+var number = Math.floor(Math.random() * 25) + 5;
+
+    playerOneAttack() {
+        // make randam attack to bring score down
+        this.playerData.update({ playerTwoHealth: this.state.playerTwoHealth - 25 });
+    }
+
+    playerTwoAttack() {
+        // make randam attack to bring score down
+        this.playerData.update({ playerOneHealth: this.state.playerOneHealth - 25 });    
+    }
+    
+   
+   gameReset(){
+        this.playerData.update({ playerOneHealth: this.state.playerOneHealth = 100});
+        this.playerData.update({ playerTwoHealth: this.state.playerTwoHealth = 100});
+    }
+
+    render() {
+        
+        
+         let display 
+         if(this.state.playerOneHealth <= 0) {
+             display = <h1>Player Two Wins</h1>
+             {this.gameReset}
+         } else if(this.state.playerTwoHealth <= 0) {
+             display = <h1>Player One Wins</h1>
+             {this.gameReset}
+         }
+        
+        return ( 
+            <div className="main">
+                <h1 id="mainTitle">{this.state.playerOneName } vs {this.state.playerTwoName}</h1>
+            
+                    <div id="sub-title">
+                        <RaisedButton label="Reset" primary={true} style={style} onClick={this.gameReset} />
+                        {display}
+                    </div>
+                
+                <div className="playerOne">
+                    <img className="playerImage" src={Trainer1Image} />
+                    <h2 className="playerOneName"> {this.state.playerOneName}</h2>
+                    <h2 className="playerOneHealth">HP:{this.state.playerOneHealth}</h2>
+                    <RaisedButton onClick={this.playerOneAttack.bind(this)} label="Attack" style={style} />
+                    <RaisedButton label="Run" style={style} />
+                    
+                </div>
+               
+
+                <div class="playerTwo" className="playerTwo">
+                   <img className="playerImage" src={Trainer2Image} alt="lol2"/>
+                   <h2 className="playerTwoName">{this.state.playerTwoName}</h2>
+                    <h2 className="playerTwoHealth">HP:{this.state.playerTwoHealth}</h2>
+                   <RaisedButton onClick={this.playerTwoAttack.bind(this)} label="Attack" style={style} />
+                   <RaisedButton label="Run" style={style} />
+                    
+                </div>
+                
+              </div>
+
+        );
+    }
+}
